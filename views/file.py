@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from PyQt5.QtCore import QDir, QFileInfo
 from PyQt5.QtWidgets import QFileDialog, QFileSystemModel, QHBoxLayout, QLineEdit, QListView, QPushButton, QVBoxLayout, QWidget
