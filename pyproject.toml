@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "image-seperator"
+name = "file-seperator"
 version = "0.1.0"
 description = ""
 authors = ["parker <qkrrudtjr954@gmail.com>"]
