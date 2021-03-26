@@ -29,7 +29,7 @@ class FileView(QWidget):
 
         # 파일 목록 화면 설정
         self.fileModel = QFileSystemModel()
-        self.fileModel.setFilter(QDir.NoDot | QDir.AllDirs | QDir.Files)
+        self.fileModel.setFilter(QDir.NoDot | QDir.Files)
 
         self.fileListView = QListView()
         self.fileListView.setModel(self.fileModel)

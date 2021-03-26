@@ -1,3 +1,6 @@
+import os
+import shutil
+
 from PyQt5.QtCore import QFileInfo, Qt
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QFileDialog, QHBoxLayout, QLabel, QListWidget, QListWidgetItem, QMessageBox, QPushButton, QVBoxLayout, QWidget
@@ -7,13 +10,13 @@ class DirSelectFormView(QWidget):
     def __init__(self, *args, **kwargs):
         super(DirSelectFormView, self).__init__(*args, **kwargs)
         self.mainLayout = QHBoxLayout(self)
-        self.dirSelectDialogBtn = QPushButton('+')
+        self.dirSelectDialogBtn = QPushButton('+ add folder')
         self.mainLayout.addWidget(self.dirSelectDialogBtn)
 
 
 class DirectoryItem(QWidget):
-    def __init__(self, *args, **kwargs):
-        super(DirectoryItem, self).__init__(*args, **kwargs)
+    def __init__(self, parent=None):
+        super(DirectoryItem, self).__init__(parent=parent)
         self.mainLayout = QHBoxLayout()
 
         self.iconQLabel = QLabel(self)
@@ -21,11 +24,8 @@ class DirectoryItem(QWidget):
 
         self.pathLabel = QLabel()
 
-        self.moveBtn = QPushButton('+')
-
         self.mainLayout.addWidget(self.iconQLabel, 0)
         self.mainLayout.addWidget(self.pathLabel, 1)
-        self.mainLayout.addWidget(self.moveBtn, 2)
 
         self.setLayout(self.mainLayout)
 
@@ -51,8 +51,18 @@ class DirectoryView(QWidget):
 
         self.setLayout(self.mainLayout)
 
-    def onClicked(self, item):
-        QMessageBox.information(self, "Info", item.text())
+    def onClicked(self, item: 'QListWidgetItem'):
+        if self.selectedFileInfo is None:
+            QMessageBox.information(self, "Error", "이동할 파일을 선택해주세요.")
+            return
+
+        from_path = self.selectedFileInfo.absoluteFilePath()
+        to_path = self.listWidget.itemWidget(item).pathLabel.text()
+
+        if os.path.exists(from_path) and os.path.isdir(to_path):
+            shutil.move(from_path, to_path)
+        else:
+            QMessageBox.information(self, "Error", "이동 경로 및 파일이 올바르지 않습니다.")
 
     def setCurrentSelectedFile(self, fileInfo: 'QFileInfo'):
         self.selectedFileInfo = fileInfo
@@ -70,7 +80,7 @@ class DirectoryView(QWidget):
             QMessageBox.information(self, "Error", f'{path}는 이미 존재합니다.')
             return
 
-        directoryItemWidget = DirectoryItem()
+        directoryItemWidget = DirectoryItem(parent=self)
         directoryItemWidget.setPath(path)
         item = QListWidgetItem(self.listWidget)
         item.setSizeHint(directoryItemWidget.sizeHint())
@@ -84,3 +94,6 @@ class DirectoryView(QWidget):
             return
 
         self.addDirListItem(rootPath)
+
+    def clearCurrentSelectedFile(self):
+        self.selectedFileInfo = None

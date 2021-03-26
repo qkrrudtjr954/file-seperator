@@ -29,11 +29,15 @@ class MainView(QWidget):
         self.showMaximized()
 
     def selectionChanged(self, *args, **kwargs):
-        selectedFileIndex = self.selectionModel.selection().indexes()[0]
-        selectedFileInfo = self.fileView.fileModel.fileInfo(selectedFileIndex)
+        if len(self.selectionModel.selection().indexes()) == 0:
+            self.contentView.resetFile()
+            self.directoryView.clearCurrentSelectedFile()
+        else:
+            selectedFileIndex = self.selectionModel.selection().indexes()[0]
+            selectedFileInfo = self.fileView.fileModel.fileInfo(selectedFileIndex)
 
-        self.contentView.showFile(selectedFileInfo)
-        self.directoryView.setCurrentSelectedFile(selectedFileInfo)
+            self.contentView.showFile(selectedFileInfo)
+            self.directoryView.setCurrentSelectedFile(selectedFileInfo)
 
 
 app = QApplication(sys.argv)
